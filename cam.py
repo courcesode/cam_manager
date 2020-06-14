@@ -1,9 +1,10 @@
 import os, time
 
 cam_directory = "./files/"                                 # Directory where the video files are located.
-seconds_per_week = 1200                                 # 604800                           
-one_week_prior = time.time() - seconds_per_week     
+seconds_per_week = 604800                           
+one_week_prior = time.time() - seconds_per_week             
 files = os.listdir(cam_directory)
+files_to_delete = (file for file in files if os.path.getmtime(cam_directory + file) <= one_week_prior)  # create generator to determine which files to delete 
 
 
 def sendEmail(newFile):
@@ -30,11 +31,7 @@ def saveDirectoryContents():
 
 
 def deleteOldFiles():
-    global cam_directory
-    global files
-    for file in files: 
-        mtime = os.path.getmtime(cam_directory + file)              #get mtime (last time the file's contents were changed)
-        if mtime <= one_week_prior: 
+    for file in files_to_delete:  
             os.remove(cam_directory + file)
 
 
